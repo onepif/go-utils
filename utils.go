@@ -1,10 +1,13 @@
 package utils
 
 import (
+	crand "crypto/rand"
+	"encoding/hex"
 	"errors"
 	"fmt"
 	"io"
 	"math"
+	mrand "math/rand"
 	"net"
 	"os"
 	"path/filepath"
@@ -17,11 +20,13 @@ import (
 	kb "github.com/eiannone/keyboard"
 )
 
+/*
 var GetPtr TGetPtr
 
 type TGetPtr func() *string
 
-//func GetPtr(s string) { return &s }
+func GetPtr(s string) { return &s }
+*/
 
 func GetArch() (*string, error) {
 	var uname syscall.Utsname
@@ -185,4 +190,70 @@ func listDirByWalk(path string) {
 
 		return nil
 	})
+}
+
+func MakeFile(pfname, content *string) error {
+	if f, e := os.Create(*pfname); e != nil { return e }
+	if _, e = f.WriteString(*content+"\n"); e != nil { return e }
+	f.Close()
+
+	return nil
+}
+
+func AppendFile(pfname, content *string) error {
+	if f, e := os.OpenFile(*pfname, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644); e != nil { return e }
+	if _, e = f.WriteString(*content+"\n"); e != nil { return e }
+	f.Close()
+
+	return nil
+}
+
+func MkTmpName(prefix string) string {
+	randBytes := make([]byte, 6)
+	crand.Read(randBytes)
+
+	return prefix+"."+hex.EncodeToString(randBytes)
+}
+
+type TRoll struct {
+	RollQuit chan bool
+}
+
+// roll <arg>
+//
+// rolling |/-\ etc..
+// про позиционирование курсора:
+// https://docs.microsoft.com/ru-ru/windows/console/console-virtual-terminal-sequences
+// http://microsin.net/adminstuff/xnix/ansivt100-terminal-control-escape-sequences.html
+//type Coord struct {
+//	X, Y int
+//}
+//(self *Coord)
+func Roll(x, y int) {
+	var (
+		color = [...]string { u.RED, u.GREEN, u.BROWN, u.BLUE, u.PURPLE, u.CYAN, u.GRAY, }
+		char = [...]string { "|", "/", "-", "\\", }
+	)
+
+	for _, ix := range(char) {
+		fmt.Printf("%s", u.PUSH_POS)
+		fmt.Printf("%s%d;%dH%s%s%s%s", u.ESC, y, x, color[mrand.Intn(len(color))], u.BKG_BLUE, ix, u.RESET)
+		fmt.Printf("%s", u.POP_POS)
+
+		time.Sleep(250 * time.Millisecond)
+	}
+}
+
+func (self *TRoll) RollWrap(x, y int) {
+	go func() {
+		for {
+			select {
+			case <- self.RollQuit:
+				fmt.Printf("%s%s%d;%dH%s%s", u.PUSH_POS, u.ESC, y, 0, u.CLR_STR, u.POP_POS)
+				return
+			default:
+				Roll(x, y)
+			}
+		}
+	}()
 }
