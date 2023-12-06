@@ -100,7 +100,7 @@ func GetMACfromIP(ip string) (string, error) {
 		}
 	}
 
-	return nil, errors.New("not found MAC address")
+	return "", errors.New("not found MAC address")
 }
 
 // getCurrentFuncName will return the current function's name.
