@@ -88,7 +88,7 @@ func ResolveHostIp() (string, error) {
 	return "", errors.New("not fount interfaces")
 }
 
-func GetMACfromIP(ip string) ([]byte, error) {
+func GetMACfromIP(ip string) (string, error) {
 	interFaces, _ := net.Interfaces()
 
 	for _, interFace := range interFaces {
