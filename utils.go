@@ -88,19 +88,19 @@ func ResolveHostIp() (string, error) {
 	return "", errors.New("not fount interfaces")
 }
 
-func GetMACfromIP(ip string) (string, error) {
+func GetMACfromIP(ip string) ([]byte, error) {
 	interFaces, _ := net.Interfaces()
 
 	for _, interFace := range interFaces {
 		addrs, _ := interFace.Addrs()
 		for _, addr := range addrs {
 			if ok, _ := regexp.Match(ip, []byte(addr.String())); ok {
-				return string(interFace.HardwareAddr), nil
+				return interFace.HardwareAddr, nil
 			}
 		}
 	}
 
-	return "", errors.New("not found MAC address")
+	return nil, errors.New("not found MAC address")
 }
 
 // getCurrentFuncName will return the current function's name.
