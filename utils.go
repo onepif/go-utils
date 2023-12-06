@@ -209,7 +209,7 @@ func listDirByWalk(path string) {
 }
 
 func MakeFile(pfname, content *string) error {
-	if f, e := os.Create(*pfname); e != nil { return e }
+	f, e := os.Create(*pfname); if e != nil { return e }
 	if _, e = f.WriteString(*content+"\n"); e != nil { return e }
 	f.Close()
 
@@ -217,7 +217,7 @@ func MakeFile(pfname, content *string) error {
 }
 
 func AppendFile(pfname, content *string) error {
-	if f, e := os.OpenFile(*pfname, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644); e != nil { return e }
+	f, e := os.OpenFile(*pfname, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644); if e != nil { return e }
 	if _, e = f.WriteString(*content+"\n"); e != nil { return e }
 	f.Close()
 
@@ -247,14 +247,14 @@ type TRoll struct {
 //(self *Coord)
 func Roll(x, y int) {
 	var (
-		color = [...]string { u.RED, u.GREEN, u.BROWN, u.BLUE, u.PURPLE, u.CYAN, u.GRAY, }
+		color = [...]string { RED, GREEN, BROWN, BLUE, PURPLE, CYAN, GRAY, }
 		char = [...]string { "|", "/", "-", "\\", }
 	)
 
 	for _, ix := range(char) {
-		fmt.Printf("%s", u.PUSH_POS)
-		fmt.Printf("%s%d;%dH%s%s%s%s", u.ESC, y, x, color[mrand.Intn(len(color))], u.BKG_BLUE, ix, u.RESET)
-		fmt.Printf("%s", u.POP_POS)
+		fmt.Printf("%s", PUSH_POS)
+		fmt.Printf("%s%d;%dH%s%s%s%s", ESC, y, x, color[mrand.Intn(len(color))], BKG_BLUE, ix, RESET)
+		fmt.Printf("%s", POP_POS)
 
 		time.Sleep(250 * time.Millisecond)
 	}
@@ -265,7 +265,7 @@ func (self *TRoll) RollWrap(x, y int) {
 		for {
 			select {
 			case <- self.RollQuit:
-				fmt.Printf("%s%s%d;%dH%s%s", u.PUSH_POS, u.ESC, y, 0, u.CLR_STR, u.POP_POS)
+				fmt.Printf("%s%s%d;%dH%s%s", PUSH_POS, ESC, y, 0, CLR_STR, POP_POS)
 				return
 			default:
 				Roll(x, y)
