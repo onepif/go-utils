@@ -87,6 +87,21 @@ func ResolveHostIp() (string, error) {
 	return "", errors.New("not fount interfaces")
 }
 
+func GetMACfromIP(ip string) ([]byte, error) {
+	interFaces, _ := net.Interfaces()
+
+	for _, interFace := range interFaces {
+		addrs, _ := interFace.Addrs()
+		for _, addr := range addrs {
+			if ok, _ := regexp.Match(ip, []byte(addr.String())); ok {
+				return interFace.HardwareAddr, nil
+			}
+		}
+	}
+
+	return nil, errors.New("not found MAC address")
+}
+
 // getCurrentFuncName will return the current function's name.
 // It can be used for a better log debug system.(I'm NOT sure.)
 // https://gist.github.com/HouLinwei/ => Ctrl+F => golang-get-the-function's-name.go
