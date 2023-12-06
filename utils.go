@@ -95,7 +95,7 @@ func GetMACfromIP(ip string) ([]byte, error) {
 		addrs, _ := interFace.Addrs()
 		for _, addr := range addrs {
 			if ok, _ := regexp.Match(ip, []byte(addr.String())); ok {
-				return interFace.HardwareAddr, nil
+				return string(interFace.HardwareAddr), nil
 			}
 		}
 	}
