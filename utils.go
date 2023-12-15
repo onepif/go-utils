@@ -49,7 +49,7 @@ func GetKernelVer() (*string, error) {
 
 	pstr := new(string)
 
-	if e := syscall.Uname(&uname); e != nil { return new(string), e } else {
+	if e := syscall.Uname(&uname); e != nil { return nil, e } else {
 		for _, ix := range uname.Release { if ix != '\x00' { *pstr += string(byte(ix)) } else { break } }
 
 		return pstr, nil
