@@ -41,6 +41,10 @@ const (
 
 	SET_HOME	string = ESC+"H"
 	SET_POS		string = ESC+"%d;%dH"
+	UP_POS		string = ESC+"%dA"
+	DWN_POS		string = ESC+"%dB"
+	FRWRD_POS	string = ESC+"%dC"
+	RVRS_POS	string = ESC+"%dD"
 	CURS_DIS	string = ESC+"?25l"
 	CURS_EN		string = ESC+"?25h"
 )

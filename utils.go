@@ -19,6 +19,8 @@ import (
 	"time"
 
 	kb "github.com/eiannone/keyboard"
+
+	l "github.com/onepif/go-logging"
 )
 
 /*
@@ -81,11 +83,10 @@ func ResolveHostIp() (string, error) {
 	for _, netInterfaceAddress := range netInterfaceAddresses {
 		networkIp, ok := netInterfaceAddress.(*net.IPNet)
 		if ok && !networkIp.IP.IsLoopback() && networkIp.IP.To4() != nil {
-			ip := networkIp.IP.String()
-			return ip, nil
+			return networkIp.IP.String(), nil
 		}
 	}
-	return "", errors.New("not fount interfaces")
+	return "", errors.New("not found interfaces")
 }
 
 func GetMACfromIP(ip string) (string, error) {
@@ -272,4 +273,11 @@ func (self *TRoll) RollWrap(x, y int) {
 			}
 		}
 	}()
+}
+
+func ErrorCheck(e error, msg string, errID int) {
+	if e != nil {
+		l.Alert(&l.TlogAlert{e , "error", msg})
+		os.Exit(errID)
+	}
 }
