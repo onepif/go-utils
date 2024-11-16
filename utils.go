@@ -19,8 +19,6 @@ import (
 	"time"
 
 	kb "github.com/eiannone/keyboard"
-
-	l "github.com/onepif/go-logging"
 )
 
 /*
@@ -273,11 +271,4 @@ func (self *TRoll) RollWrap(x, y int) {
 			}
 		}
 	}()
-}
-
-func ErrorCheck(e error, msg string, errID int) {
-	if e != nil {
-		l.Alert(&l.TlogAlert{e , "error", msg})
-		os.Exit(errID)
-	}
 }
